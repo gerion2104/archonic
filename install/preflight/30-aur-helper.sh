@@ -1,3 +1,7 @@
+# Bauwerkzeuge zuerst: makepkg braucht fakeroot, debugedit & Co. aus base-devel.
+# Muss hier stehen, nicht in packages/base.packages -- preflight laeuft vorher.
+sudo pacman -S --needed --noconfirm base-devel git
+
 # yay bauen, falls nicht vorhanden.
 if ! command -v yay >/dev/null; then
   log "yay bauen"
