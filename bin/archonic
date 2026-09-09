@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Einstiegspunkt für alles. Untergruppen liegen als bin/archonic-<verb>.
+set -euo pipefail
+ARCHONIC_PATH="${ARCHONIC_PATH:-$HOME/.local/share/archonic}"
+
+usage() {
+  cat <<'USAGE'
+archonic <befehl>
+
+  update      Repo + Pakete aktualisieren, Migrationen ausführen
+  migrate     Offene Migrationen ausführen
+  install     Installer erneut laufen lassen (idempotent)
+  refresh     Configs neu verlinken
+  edit        Repo im Editor öffnen
+USAGE
+}
+
+case "${1:-}" in
+  update)  exec "$ARCHONIC_PATH/bin/archonic-update" "${@:2}" ;;
+  migrate) exec "$ARCHONIC_PATH/bin/archonic-migrate" "${@:2}" ;;
+  install) exec "$ARCHONIC_PATH/install.sh" ;;
+  refresh) source "$ARCHONIC_PATH/lib/common.sh"; run_modules "$ARCHONIC_PATH/install/user" ;;
+  edit)    exec "${EDITOR:-nvim}" "$ARCHONIC_PATH" ;;
+  *)       usage; exit 1 ;;
+esac

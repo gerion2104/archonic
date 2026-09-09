@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Repo aktualisieren, System aktualisieren, Migrationen nachziehen.
+set -euo pipefail
+ARCHONIC_PATH="${ARCHONIC_PATH:-$HOME/.local/share/archonic}"
+source "$ARCHONIC_PATH/lib/common.sh"
+
+log "Repo aktualisieren"
+git -C "$ARCHONIC_PATH" pull --ff-only
+
+log "Systempakete aktualisieren"
+if command -v yay >/dev/null; then yay -Syu --noconfirm; else sudo pacman -Syu --noconfirm; fi
+
+log "Neue Pakete aus den Listen nachinstallieren"
+pacman_install "$ARCHONIC_PATH"/packages/*.packages 2>/dev/null || true
+
+"$ARCHONIC_PATH/bin/archonic-migrate"
+log "Update fertig."

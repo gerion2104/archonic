@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Legt eine neue Migration mit aktuellem Zeitstempel an.
+set -euo pipefail
+ARCHONIC_PATH="${ARCHONIC_PATH:-$HOME/.local/share/archonic}"
+f="$ARCHONIC_PATH/migrations/$(date +%s).sh"
+cat > "$f" <<'TPL'
+# Beschreibung: was diese Migration tut.
+# Muss idempotent sein -- kann auf jedem Rechner genau einmal laufen.
+TPL
+echo "$f"
+"${EDITOR:-nvim}" "$f"

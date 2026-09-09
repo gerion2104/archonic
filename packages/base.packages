@@ -1,0 +1,12 @@
+# Grundsystem -- alles, was auf jeder Maschine gebraucht wird.
+base-devel
+git
+curl
+wget
+rsync
+unzip
+man-db
+openssh
+ufw
+plocate
+zram-generator

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Führt migrations/<unix-timestamp>.sh aus, die noch nicht gelaufen sind.
+# Status liegt pro User in ~/.local/state/archonic/migrations/.
+set -euo pipefail
+ARCHONIC_PATH="${ARCHONIC_PATH:-$HOME/.local/share/archonic}"
+source "$ARCHONIC_PATH/lib/common.sh"
+
+mark_all=0
+[[ "${1:-}" == --mark-all ]] && mark_all=1
+
+shopt -s nullglob
+for m in "$ARCHONIC_PATH"/migrations/*.sh; do
+  id=$(basename "$m" .sh)
+  [[ -f "$ARCHONIC_MIGRATIONS/$id" ]] && continue
+
+  if ((mark_all)); then
+    touch "$ARCHONIC_MIGRATIONS/$id"
+    continue
+  fi
+
+  log "Migration $id"
+  # shellcheck disable=SC1090
+  ( source "$m" ) && touch "$ARCHONIC_MIGRATIONS/$id" \
+    || warn "Migration $id fehlgeschlagen -- wird beim nächsten Lauf wiederholt."
+done
