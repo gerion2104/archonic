@@ -8,7 +8,7 @@ Mein Arch-Setup als Code. Ein Repo, ein Script, reproduzierbar auf jedem Rechner
 2. Anmelden und ausführen:
 
 ```
-bash <(curl -sL https://raw.githubusercontent.com/DEIN_USER/archonic/main/boot.sh)
+bash <(curl -sL https://raw.githubusercontent.com/gerion2104/archonic/main/boot.sh)
 ```
 
 ## Aufbau

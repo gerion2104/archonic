@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Einstiegspunkt auf einem frisch installierten Arch:
-#   bash <(curl -sL https://raw.githubusercontent.com/DEIN_USER/archonic/main/boot.sh)
+#   bash <(curl -sL https://raw.githubusercontent.com/gerion2104/archonic/main/boot.sh)
 set -euo pipefail
 
-REPO="${ARCHONIC_REPO:-https://github.com/DEIN_USER/archonic.git}"
+REPO="${ARCHONIC_REPO:-https://github.com/gerion2104/archonic.git}"
 REF="${ARCHONIC_REF:-main}"
 DEST="${ARCHONIC_PATH:-$HOME/.local/share/archonic}"
 
