@@ -2,7 +2,7 @@
 hyprland
 uwsm
 waybar
-wofi
+fuzzel
 mako
 hyprlock
 hypridle
@@ -21,3 +21,9 @@ ttf-jetbrains-mono-nerd
 noto-fonts
 noto-fonts-emoji
 sddm
+
+# GTK-Grundlagen: ohne librsvg stuerzen GTK-Apps beim Icon-Laden ab
+librsvg
+adwaita-icon-theme
+gnome-themes-extra
+xdg-utils
