@@ -5,5 +5,6 @@ enable_service ufw.service
 once firewall bash -c '
   sudo ufw default deny incoming
   sudo ufw default allow outgoing
+  sudo ufw limit ssh
   sudo ufw --force enable
 '
