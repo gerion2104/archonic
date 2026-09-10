@@ -38,3 +38,7 @@ pavucontrol-qt
 
 # TODO: fuzzel-Theme auf Catppuccin Mocha, passend zur Waybar
 swaybg
+qt6-svg
+qt6-virtualkeyboard
+qt6-multimedia-ffmpeg
+qt6-imageformats
