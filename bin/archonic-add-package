@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Traegt Pakete in die passende Liste ein -- prueft vorher, ob es sie
+# ueberhaupt gibt und ob sie aus den offiziellen Repos oder dem AUR kommen.
+#
+#   archonic-add-package desktop firefox signal-desktop
+#   archonic-add-package dev rustup
+set -euo pipefail
+ARCHONIC_PATH="${ARCHONIC_PATH:-$HOME/.local/share/archonic}"
+
+if (($# < 2)); then
+  echo "Aufruf: archonic-add-package <base|desktop|dev> <paket...>" >&2
+  exit 1
+fi
+
+list=$1; shift
+target="$ARCHONIC_PATH/packages/$list.packages"
+aur="$ARCHONIC_PATH/packages/aur.packages"
+[[ -f $target ]] || { echo "Keine Liste: $target" >&2; exit 1; }
+
+added=() skipped=() missing=()
+
+for pkg in "$@"; do
+  if grep -qxF "$pkg" "$ARCHONIC_PATH"/packages/*.packages 2>/dev/null; then
+    skipped+=("$pkg"); continue
+  fi
+  if pacman -Si "$pkg" >/dev/null 2>&1; then
+    echo "$pkg" >> "$target"; added+=("$pkg (repo -> $list)")
+  elif command -v yay >/dev/null && yay -Si "$pkg" >/dev/null 2>&1; then
+    echo "$pkg" >> "$aur"; added+=("$pkg (AUR)")
+  else
+    missing+=("$pkg")
+  fi
+done
+
+((${#added[@]}))   && printf 'hinzugefuegt: %s\n' "${added[@]}"
+((${#skipped[@]})) && printf 'schon drin:   %s\n' "${skipped[@]}"
+((${#missing[@]})) && { printf 'NICHT gefunden: %s\n' "${missing[@]}"; \
+                        echo "  -> Name pruefen: pacman -Ss <suchbegriff>"; }
+((${#added[@]})) && echo && echo "Jetzt: cd $ARCHONIC_PATH && ./install.sh"
+exit 0
