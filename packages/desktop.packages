@@ -31,3 +31,6 @@ xdg-utils
 # Hinweis: gdk-pixbuf 2.44 + glycin bricht GTK3-Apps, die beim Start Icons
 # aus dem Theme laden (Thunar, wofi). Upstream-Bug, Stand 09/2026.
 # Wenn behoben: thunar/wofi wieder moeglich, dieser Kommentar kann weg.
+pwvucontrol
+speedtest-cli
+networkmanager

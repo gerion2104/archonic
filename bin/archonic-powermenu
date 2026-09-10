@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Power-Menü über fuzzel. Bewusst mit Bestätigung durch die Auswahl selbst.
+set -euo pipefail
+
+choice=$(printf 'Sperren\nAbmelden\nRuhezustand\nNeustart\nHerunterfahren\n' \
+  | fuzzel --dmenu --prompt 'Power: ')
+
+case "$choice" in
+  Sperren)        hyprlock ;;
+  Abmelden)       hyprctl dispatch exit ;;
+  Ruhezustand)    systemctl suspend ;;
+  Neustart)       systemctl reboot ;;
+  Herunterfahren) systemctl poweroff ;;
+esac
