@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Legt einen SSH-Schluessel an (falls keiner existiert) und zeigt den
+# oeffentlichen Teil zum Eintragen bei GitHub.
+set -euo pipefail
+KEY="$HOME/.ssh/id_ed25519"
+
+if [[ -f $KEY ]]; then
+  echo "Schluessel existiert bereits: $KEY"
+else
+  mkdir -p "$HOME/.ssh"; chmod 700 "$HOME/.ssh"
+  ssh-keygen -t ed25519 -C "archonic $(hostname)" -f "$KEY"
+fi
+
+echo
+echo "Public Key -- bei GitHub eintragen unter Settings > SSH and GPG keys:"
+echo
+cat "$KEY.pub"
+echo
+echo "Danach testen:  ssh -T git@github.com"

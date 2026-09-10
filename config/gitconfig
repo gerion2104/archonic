@@ -1,0 +1,19 @@
+# Wird via Symlink zu ~/.gitconfig.
+# ACHTUNG: Diese Datei liegt in einem public Repo -- niemals Tokens,
+# Passwoerter oder Zugangsdaten hier hineinschreiben.
+[user]
+	name = Gerion
+	email = 12345678+gerion2104@users.noreply.github.com
+
+[init]
+	defaultBranch = main
+
+[pull]
+	ff = only
+
+[core]
+	editor = nvim
+
+[alias]
+	st = status --short
+	lg = log --oneline --graph -20
