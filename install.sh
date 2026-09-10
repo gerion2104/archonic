@@ -25,6 +25,8 @@ run_modules "$ARCHONIC_PATH/install/packages"    # Paketlisten
 run_modules "$ARCHONIC_PATH/install/config"      # System: /etc, Services, Firewall
 run_modules "$ARCHONIC_PATH/install/user"        # $HOME: Configs, Shell, Tools
 
+report_missing
+
 if ((FRESH)); then
   log "Frische Installation -- alle Migrationen als erledigt markieren"
   "$ARCHONIC_PATH/bin/archonic-migrate" --mark-all

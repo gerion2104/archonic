@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Verschachteltes Menü über fuzzel.
+set -euo pipefail
+
+pick() { fuzzel --dmenu --prompt "$1 " ; }
+
+menu_apps() {
+  case "$(printf 'Terminal\nDateien\nAlle Anwendungen\n' | pick 'Apps:')" in
+    Terminal)           alacritty ;;
+    Dateien)            alacritty -e yazi ;;
+    "Alle Anwendungen") fuzzel ;;
+  esac
+}
+
+menu_system() {
+  case "$(printf 'Update\nWLAN\nAudio\nBluetooth\n' | pick 'System:')" in
+    Update)    alacritty -e archonic update ;;
+    WLAN)      alacritty -e nmtui ;;
+    Audio)     pavucontrol-qt ;;
+    Bluetooth) alacritty -e bluetoothctl ;;
+  esac
+}
+
+case "$(printf 'Apps\nSystem\nPower\n' | pick 'Menü:')" in
+  Apps)   menu_apps ;;
+  System) menu_system ;;
+  Power)  archonic-powermenu ;;
+esac

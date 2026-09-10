@@ -69,7 +69,7 @@
     "format-icons": { "headphone": "", "default": ["", "", ""] },
     "tooltip-format": "{volume}%",
     "scroll-step": 5,
-    "on-click": "pwvucontrol"
+    "on-click": "pavucontrol-qt"
   },
 
   "battery": {

@@ -48,17 +48,49 @@ read_packages() {
   done
 }
 
+# Sammelt Pakete, die nicht installiert werden konnten.
+ARCHONIC_MISSING=()
+
+# Erst alles auf einmal (schnell). Schlaegt das fehl -- etwa weil ein
+# einzelner Name nicht mehr existiert -- Paket fuer Paket nachziehen und
+# nur die tatsaechlich fehlenden ueberspringen. Ein toter Paketname darf
+# nicht den kompletten Installer anhalten.
 pacman_install() {
   local pkgs; mapfile -t pkgs < <(read_packages "$@")
   ((${#pkgs[@]})) || return 0
-  sudo pacman -S --needed --noconfirm -- "${pkgs[@]}"
+  if sudo pacman -S --needed --noconfirm -- "${pkgs[@]}"; then return 0; fi
+  warn "Sammelinstallation fehlgeschlagen -- versuche einzeln"
+  local p
+  for p in "${pkgs[@]}"; do
+    if ! sudo pacman -S --needed --noconfirm -- "$p" >/dev/null 2>&1; then
+      ARCHONIC_MISSING+=("$p"); warn "uebersprungen: $p"
+    fi
+  done
+  return 0
 }
 
 aur_install() {
   local pkgs; mapfile -t pkgs < <(read_packages "$@")
   ((${#pkgs[@]})) || return 0
-  command -v yay >/dev/null || die "yay fehlt (siehe install/preflight/30-aur-helper.sh)"
-  yay -S --needed --noconfirm -- "${pkgs[@]}"
+  if ! command -v yay >/dev/null; then
+    warn "yay fehlt -- AUR-Pakete uebersprungen"
+    ARCHONIC_MISSING+=("${pkgs[@]}"); return 0
+  fi
+  if yay -S --needed --noconfirm -- "${pkgs[@]}"; then return 0; fi
+  warn "AUR-Sammelinstallation fehlgeschlagen -- versuche einzeln"
+  local p
+  for p in "${pkgs[@]}"; do
+    if ! yay -S --needed --noconfirm -- "$p" >/dev/null 2>&1; then
+      ARCHONIC_MISSING+=("$p"); warn "uebersprungen: $p"
+    fi
+  done
+  return 0
+}
+
+report_missing() {
+  ((${#ARCHONIC_MISSING[@]})) || return 0
+  warn "Nicht installiert (${#ARCHONIC_MISSING[@]}): ${ARCHONIC_MISSING[*]}"
+  warn "Namen in packages/*.packages pruefen -- Paket umbenannt oder entfernt?"
 }
 
 # --- Dateien ----------------------------------------------------------------
