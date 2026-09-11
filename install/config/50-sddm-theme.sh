@@ -21,6 +21,12 @@ if [[ -d $SDDM_THEME ]]; then
               "$SDDM_THEME/backgrounds/default.jpg.orig"
     fi
     sudo install -Dm644 "$WALL" "$SDDM_THEME/backgrounds/default.jpg"
+
+    # Ohne das gewinnt background-color gegen das Bild und man sieht
+    # nur eine einfarbige Flaeche.
+    sudo sed -i 's/^use-background-color\s*=\s*true/use-background-color = false/' \
+      "$SDDM_THEME/configs/catppuccin-mocha.conf"
+
   else
     warn "wallpapers/current.jpg fehlt -- SDDM behaelt sein Standardbild"
   fi
