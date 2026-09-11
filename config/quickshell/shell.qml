@@ -7,7 +7,15 @@ import QtQuick.Controls
 ShellRoot {
     id: root
     property bool shown: false
-    onShownChanged: grab.active = root.shown
+    onShownChanged: {
+        grab.active = root.shown
+        if (root.shown) {
+            readVol.running = true
+            readMic.running = true
+            readWifi.running = true
+            readBt.running = true
+        }
+    }
 
     readonly property color bg:      "#f21e1e2e"
     readonly property color card:    "#66313244"
@@ -88,7 +96,7 @@ ShellRoot {
                                    font.family: "JetBrainsMono Nerd Font Mono" }
                             Text { text: "WLAN"; color: root.text; font.pixelSize: 14
                                    font.bold: true; width: parent.width - 90 }
-                            Switch { onToggled: wifiProc.running = true }
+                            Switch { id: wifiSwitch; onToggled: wifiProc.running = true }
                         }
                         Pill {
                             width: parent.width
@@ -106,6 +114,7 @@ ShellRoot {
                         Row {
                             spacing: 10
                             Text {
+                                id: volIcon
                                 text: muted ? "\uf026" : "\uf028"
                                 property bool muted: false
                                 color: muted ? "#f38ba8" : root.accent
@@ -182,7 +191,7 @@ ShellRoot {
                                    font.family: "JetBrainsMono Nerd Font Mono" }
                             Text { text: "Bluetooth"; color: root.text; font.pixelSize: 14
                                    font.bold: true; width: parent.width - 90 }
-                            Switch { onToggled: btProc.running = true }
+                            Switch { id: btSwitch; onToggled: btProc.running = true }
                         }
                         Pill {
                             width: parent.width
@@ -191,6 +200,47 @@ ShellRoot {
                         }
                     }
                 }
+            }
+        }
+
+        // --- Ist-Zustand einlesen -------------------------------------
+        // wpctl gibt "Volume: 0.42" bzw. "Volume: 0.42 [MUTED]" aus.
+        Process {
+            id: readVol
+            command: ["wpctl","get-volume","@DEFAULT_AUDIO_SINK@"]
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    const m = text.match(/Volume:\s*([0-9.]+)/)
+                    if (m) vol.value = Math.round(parseFloat(m[1]) * 100)
+                    volIcon.muted = text.includes("MUTED")
+                }
+            }
+        }
+
+        Process {
+            id: readMic
+            command: ["wpctl","get-volume","@DEFAULT_AUDIO_SOURCE@"]
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    const m = text.match(/Volume:\s*([0-9.]+)/)
+                    if (m) mic.value = Math.round(parseFloat(m[1]) * 100)
+                }
+            }
+        }
+
+        Process {
+            id: readWifi
+            command: ["nmcli","radio","wifi"]
+            stdout: StdioCollector {
+                onStreamFinished: wifiSwitch.checked = text.trim() === "enabled"
+            }
+        }
+
+        Process {
+            id: readBt
+            command: ["sh","-c","bluetoothctl show 2>/dev/null | grep -c 'Powered: yes'"]
+            stdout: StdioCollector {
+                onStreamFinished: btSwitch.checked = text.trim() !== "0"
             }
         }
 
