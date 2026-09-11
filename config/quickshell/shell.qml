@@ -1,11 +1,13 @@
 import Quickshell
 import Quickshell.Io
+import Quickshell.Hyprland
 import QtQuick
 import QtQuick.Controls
 
 ShellRoot {
     id: root
     property bool shown: false
+    onShownChanged: grab.active = root.shown
 
     readonly property color bg:      "#f21e1e2e"
     readonly property color card:    "#66313244"
@@ -20,12 +22,29 @@ ShellRoot {
     }
 
     PanelWindow {
+        id: panel
+        focusable: root.shown
         visible: root.shown
         anchors { top: true; right: true }
         margins { top: 40; right: 14 }
         implicitWidth: 340
-        implicitHeight: 620
+        implicitHeight: 500
         color: "transparent"
+
+        // Klick ausserhalb schliesst die Karte. active wird bewusst
+        // imperativ gesetzt -- Quickshell schreibt selbst hinein und
+        // wuerde eine Bindung zerstoeren.
+        HyprlandFocusGrab {
+            id: grab
+            windows: [ panel ]
+            onCleared: root.shown = false
+        }
+
+        Item {
+            anchors.fill: parent
+            focus: true
+            Keys.onEscapePressed: root.shown = false
+        }
 
         component Section: Rectangle {
             width: parent.width
@@ -81,13 +100,23 @@ ShellRoot {
 
                 // ---------- Lautstärke ----------
                 Section {
-                    height: 116
+                    height: 76
                     Column {
                         anchors.fill: parent; anchors.margins: 12; spacing: 8
                         Row {
                             spacing: 10
-                            Text { text: "\uf028"; color: root.accent; font.pixelSize: 18
-                                   font.family: "JetBrainsMono Nerd Font Mono" }
+                            Text {
+                                text: muted ? "\uf026" : "\uf028"
+                                property bool muted: false
+                                color: muted ? "#f38ba8" : root.accent
+                                font.pixelSize: 18
+                                font.family: "JetBrainsMono Nerd Font Mono"
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: { parent.muted = !parent.muted; muteProc.running = true }
+                                }
+                            }
                             Text { text: "Lautstärke"; color: root.text; font.pixelSize: 14; font.bold: true }
                             Text { text: Math.round(vol.value) + "%"; color: root.subtext; font.pixelSize: 13 }
                         }
@@ -96,15 +125,6 @@ ShellRoot {
                             width: parent.width
                             from: 0; to: 100; value: 50
                             onMoved: volProc.running = true
-                        }
-                        Row {
-                            width: parent.width; spacing: 8
-                            Pill { width: (parent.width - 16) / 3; label: "\u2212"
-                                   onClicked: { vol.value = Math.max(0, vol.value - 5); volProc.running = true } }
-                            Pill { width: (parent.width - 16) / 3; label: "\uf026"
-                                   onClicked: muteProc.running = true }
-                            Pill { width: (parent.width - 16) / 3; label: "+"
-                                   onClicked: { vol.value = Math.min(100, vol.value + 5); volProc.running = true } }
                         }
                     }
                 }
@@ -132,7 +152,7 @@ ShellRoot {
 
                 // ---------- Helligkeit ----------
                 Section {
-                    height: 116
+                    height: 76
                     Column {
                         anchors.fill: parent; anchors.margins: 12; spacing: 8
                         Row {
@@ -147,13 +167,6 @@ ShellRoot {
                             width: parent.width
                             from: 1; to: 100; value: 80
                             onMoved: briProc.running = true
-                        }
-                        Row {
-                            width: parent.width; spacing: 8
-                            Pill { width: (parent.width - 8) / 2; label: "\u2212"
-                                   onClicked: { bri.value = Math.max(1, bri.value - 5); briProc.running = true } }
-                            Pill { width: (parent.width - 8) / 2; label: "+"
-                                   onClicked: { bri.value = Math.min(100, bri.value + 5); briProc.running = true } }
                         }
                     }
                 }
