@@ -8,3 +8,8 @@ once firewall bash -c '
   sudo ufw limit ssh
   sudo ufw --force enable
 '
+
+# Netzwerk und Bluetooth. Ohne aktiven Dienst laufen nmtui und
+# bluetoothctl ins Leere, und die Waybar-Module zeigen nichts.
+enable_service NetworkManager.service
+pacman -Qq bluez >/dev/null 2>&1 && enable_service bluetooth.service

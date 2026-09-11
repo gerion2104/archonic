@@ -32,7 +32,7 @@
     "format-disabled": "",
     "format-connected": "",
     "tooltip-format": "{num_connections} verbunden",
-    "on-click": "alacritty -e bluetoothctl"
+    "on-click": "qs ipc call audio toggle"
   },
 
   "clock": {
@@ -52,15 +52,16 @@
   "tray": { "icon-size": 14, "spacing": 14 },
 
   "network": {
-    "format": "{icon}",
-    "format-icons": ["", "", "", "", ""],
-    "format-wifi": "{icon}",
-    "format-ethernet": "",
-    "format-disconnected": "",
-    "tooltip-format-wifi": "{essid} ({signalStrength}%)",
-    "tooltip-format-ethernet": "{ipaddr}",
-    "interval": 5,
-    "on-click": "alacritty -e nmtui"
+    "format": "\uf6ff",
+    "format-wifi": "\uf1eb",
+    "format-ethernet": "\uf6ff",
+    "format-linked": "\uf6ff",
+    "format-disconnected": "\uf05e",
+    "tooltip-format-wifi": "WLAN: {essid} ({signalStrength}%)",
+    "tooltip-format-ethernet": "LAN: {ifname}",
+    "tooltip-format-disconnected": "Nicht verbunden",
+    "interval": 3,
+    "on-click": "qs ipc call audio toggle"
   },
 
   "pulseaudio": {

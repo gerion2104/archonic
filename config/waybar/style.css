@@ -172,3 +172,21 @@ tooltip label {
   margin: 4px 3px;
   border-radius: 8px;
 }
+
+/* --- rechte Seite ruhiger: einheitlich statt bunt ------------------- */
+#bluetooth, #network, #pulseaudio, #battery,
+#custom-power, #custom-expand-icon {
+  background: #2a2b3c;
+  color: #a6adc8;
+  padding: 0 11px;
+  margin: 4px 3px;
+  border-radius: 8px;
+}
+
+#bluetooth:hover, #pulseaudio:hover,
+#custom-power:hover, #custom-expand-icon:hover {
+  background: #383a4d;
+  color: #cdd6f4;
+}
+
+#custom-power { color: #f38ba8; }
